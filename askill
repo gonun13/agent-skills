@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+die() {
+  printf 'askill: %s\n' "$*" >&2
+  exit 1
+}
+
+usage() {
+  cat <<'EOF'
+Usage: askill
+
+Choose a skill, sibling project, installed provider, and mode, then open the
+provider's interactive CLI in that project with the skill as its first prompt.
+
+Modes:
+  auto  Full permissions without approval prompts.
+  plan  Read-only planning mode.
+EOF
+}
+
+pick() {
+  local title="$1"
+  shift
+  local choice number
+
+  printf '\n%s\n' "$title" >&2
+  local i=1
+  for choice in "$@"; do
+    printf '  %d) %s\n' "$i" "$choice" >&2
+    i=$((i + 1))
+  done
+
+  while true; do
+    printf '> ' >&2
+    IFS= read -r choice || die 'selection cancelled'
+    case "$choice" in
+      ''|*[!0-9]*) printf 'Enter a number from 1 to %d.\n' "$#" >&2 ;;
+      *) number=$((10#$choice))
+         if (( number >= 1 && number <= $# )); then
+           PICKED=$((number - 1))
+           return
+         fi
+         printf 'Enter a number from 1 to %d.\n' "$#" >&2 ;;
+    esac
+  done
+}
+
+if (( $# > 0 )); then
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    *) die 'this command takes no arguments; run askill to start' ;;
+  esac
+fi
+
+self="${BASH_SOURCE[0]}"
+while [[ -L "$self" ]]; do
+  dir="$(cd -P "$(dirname "$self")" && pwd)"
+  self="$(readlink "$self")"
+  [[ "$self" == /* ]] || self="$dir/$self"
+done
+root="$(cd -P "$(dirname "$self")" && pwd)"
+
+shopt -s nullglob
+
+skill_files=()
+skill_names=()
+for file in "$root"/skills/*.md; do
+  name="$(basename "$file" .md)"
+  [[ "$name" == _* ]] && continue
+  skill_files+=("$file")
+  skill_names+=("$name")
+done
+(( ${#skill_files[@]} > 0 )) || die "no skills found in $root/skills"
+pick 'Skill' "${skill_names[@]}"
+skill_file="${skill_files[$PICKED]}"
+skill_name="${skill_names[$PICKED]}"
+
+projects=()
+project_names=()
+for candidate in "$root"/../*/; do
+  project="$(cd -P "$candidate" && pwd)"
+  [[ "$project" == "$root" ]] && continue
+  projects+=("$project")
+  project_names+=("$(basename "$project")")
+done
+(( ${#projects[@]} > 0 )) || die "no sibling projects found beside $root"
+pick 'Project' "${project_names[@]}"
+project="${projects[$PICKED]}"
+project_name="${project_names[$PICKED]}"
+
+provider_names=()
+provider_bins=()
+provider_labels=()
+known_names=(claude cursor codex copilot opencode)
+known_bins=(claude cursor-agent codex copilot opencode)
+known_labels=('Claude Code' 'Cursor Agent' 'Codex CLI' 'GitHub Copilot CLI' 'opencode')
+for i in "${!known_names[@]}"; do
+  if command -v "${known_bins[$i]}" >/dev/null 2>&1; then
+    provider_names+=("${known_names[$i]}")
+    provider_bins+=("${known_bins[$i]}")
+    provider_labels+=("${known_labels[$i]}")
+  fi
+done
+(( ${#provider_names[@]} > 0 )) || die 'no supported provider CLI is installed'
+pick 'Provider' "${provider_labels[@]}"
+provider="${provider_names[$PICKED]}"
+provider_bin="${provider_bins[$PICKED]}"
+provider_label="${provider_labels[$PICKED]}"
+
+modes=(auto plan)
+pick 'Mode' "${modes[@]}"
+mode="${modes[$PICKED]}"
+
+# The frontmatter is metadata for skill discovery, not instructions, and its
+# leading '---' would be read as a flag by providers taking the prompt in argv.
+prompt="$(awk '
+  NR == 1 && $0 == "---" { fm = 1; next }
+  fm && $0 == "---"      { fm = 0; next }
+  fm                     { next }
+  !body && $0 == ""      { next }
+                         { body = 1; print }
+' "$skill_file")"
+[[ -n "$prompt" ]] || die "$skill_file has no instructions"
+cmd=("$provider_bin")
+
+case "$provider:$mode" in
+  claude:auto)   cmd+=(--dangerously-skip-permissions) ;;
+  claude:plan)   cmd+=(--permission-mode plan) ;;
+  cursor:auto)   cmd+=(--sandbox disabled) ;;
+  cursor:plan)   cmd+=(--mode plan) ;;
+  codex:auto)    cmd+=(--dangerously-bypass-approvals-and-sandbox) ;;
+  codex:plan)    cmd+=(--sandbox read-only) ;;
+  copilot:auto)  cmd+=(--allow-all-tools --allow-all-paths --allow-all-urls --no-ask-user) ;;
+  copilot:plan)  cmd+=(--mode plan) ;;
+  opencode:auto) cmd+=(--auto) ;;
+  opencode:plan) cmd+=(--agent plan) ;;
+esac
+
+case "$provider" in
+  copilot)  cmd+=(--interactive "$prompt") ;;
+  opencode) cmd+=(--prompt "$prompt") ;;
+  *)        cmd+=("$prompt") ;;
+esac
+
+printf '\nOpening %s in %s with %s (%s).\n\n' \
+  "$provider_label" "$project_name" "$skill_name" "$mode" >&2
+cd "$project" || die "cannot enter $project"
+exec "${cmd[@]}"
