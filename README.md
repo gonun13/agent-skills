@@ -45,6 +45,8 @@ Skills are single Markdown files:
 ```text
 skills/
 ├── _template.md
+├── changelog.md
+├── janitor.md
 └── repo-recon.md
 ```
 
