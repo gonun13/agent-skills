@@ -1,6 +1,6 @@
 # agent-skills
 
-`askill` is a small interactive launcher for running reusable instructions with
+`askill` is a non-invasive small interactive launcher for running reusable instructions with
 the coding-agent CLI already installed on your machine.
 
 ```console
@@ -51,9 +51,13 @@ skills/
 The filename is the name shown in the menu. Files beginning with `_` are not
 listed.
 
-## Install
+## Usage
 
-Put the root `askill` script on your `PATH`, for example:
+```console
+$ ./askill
+```
+
+If you want, you can put the root `askill` script on your `PATH`, for example:
 
 ```console
 $ ln -s "$PWD/askill" ~/.local/bin/askill
