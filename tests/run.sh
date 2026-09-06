@@ -31,6 +31,18 @@ assert_absent() {
   return 1
 }
 
+assert_no_bypass() {
+  local value="$1"
+  local flag
+  for flag in --dangerously --yolo --allow-all bypassPermissions danger-full-access \
+              'arg=--force' 'arg=disabled' 'arg=never'; do
+    if [[ "$value" == *"$flag"* ]]; then
+      printf '    bypass flag reached the provider: %s\n' "$flag"
+      return 1
+    fi
+  done
+}
+
 run_case() {
   local provider="$1"
   local mode="$2"
@@ -86,6 +98,7 @@ EOF
      assert_contains "$recorded" "$expected" &&
      assert_contains "$recorded" 'UNIQUE_SKILL_INSTRUCTION' &&
      assert_absent "$recorded" 'UNIQUE_FRONTMATTER' &&
+     assert_no_bypass "$recorded" &&
      [[ "$output" != *'_template'* ]]; then
     printf 'ok - %s %s\n' "$provider" "$mode"
     passed=$((passed + 1))
@@ -95,15 +108,15 @@ EOF
   fi
 }
 
-run_case claude auto 'arg=--dangerously-skip-permissions'
+run_case claude auto $'arg=--permission-mode\narg=auto'
 run_case claude plan $'arg=--permission-mode\narg=plan'
-run_case cursor auto $'arg=--sandbox\narg=disabled'
+run_case cursor auto $'arg=--sandbox\narg=enabled'
 run_case cursor plan $'arg=--mode\narg=plan'
-run_case codex auto '--dangerously-bypass-approvals-and-sandbox'
+run_case codex auto $'arg=--sandbox\narg=workspace-write\narg=--ask-for-approval\narg=on-request'
 run_case codex plan $'arg=--sandbox\narg=read-only'
-run_case copilot auto $'arg=--allow-all-tools\narg=--allow-all-paths\narg=--allow-all-urls\narg=--no-ask-user'
+run_case copilot auto $'arg=--mode\narg=autopilot'
 run_case copilot plan $'arg=--mode\narg=plan'
-run_case opencode auto 'arg=--auto'
+run_case opencode auto $'arg=--agent\narg=build\narg=--auto'
 run_case opencode plan $'arg=--agent\narg=plan'
 
 help="$("$repo/askill" --help)"

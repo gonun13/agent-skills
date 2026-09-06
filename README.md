@@ -71,13 +71,22 @@ Only installed CLIs appear in the menu:
 - GitHub Copilot CLI (`copilot`)
 - opencode (`opencode`)
 
-`plan` uses each provider's native plan or read-only mode.
+Each mode maps to that CLI's own equivalent:
 
-`auto` deliberately disables approval and sandbox protections so the provider
-can work without interruption. It is equivalent to the provider's dangerous
-or unattended mode and can modify files or run commands directly in the
-selected project. There is no worktree, confirmation, target guard, or askill
-safety layer.
+| | plan | auto |
+|---|---|---|
+| claude | `--permission-mode plan` | `--permission-mode auto` |
+| cursor-agent | `--mode plan` | `--sandbox enabled` |
+| codex | `--sandbox read-only` | `--sandbox workspace-write --ask-for-approval on-request` |
+| copilot | `--mode plan` | `--mode autopilot` |
+| opencode | `--agent plan` | `--agent build --auto` |
+
+`auto` is the provider's auto mode, not its bypass: the agent works without
+stopping at every approval, but the CLI's sandbox and deny rules stay in force.
+No permission-bypass flag is ever passed, and a test asserts it.
+
+It still writes to the project you selected — there is no worktree or
+confirmation step. `plan` is the read-only choice.
 
 ## Writing a skill
 

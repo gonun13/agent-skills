@@ -15,8 +15,9 @@ Choose a skill, sibling project, installed provider, and mode, then open the
 provider's interactive CLI in that project with the skill as its first prompt.
 
 Modes:
-  auto  Full permissions without approval prompts.
-  plan  Read-only planning mode.
+  auto  The provider's own auto mode: works without stopping at every
+        approval, with its sandbox and deny rules still in force.
+  plan  The provider's read-only planning mode.
 EOF
 }
 
@@ -125,16 +126,18 @@ prompt="$(awk '
 [[ -n "$prompt" ]] || die "$skill_file has no instructions"
 cmd=("$provider_bin")
 
+# auto is each CLI's own auto mode -- it works without stopping at every
+# approval, but its sandbox and deny rules stay on. No bypass flags here.
 case "$provider:$mode" in
-  claude:auto)   cmd+=(--dangerously-skip-permissions) ;;
+  claude:auto)   cmd+=(--permission-mode auto) ;;
   claude:plan)   cmd+=(--permission-mode plan) ;;
-  cursor:auto)   cmd+=(--sandbox disabled) ;;
+  cursor:auto)   cmd+=(--sandbox enabled) ;;
   cursor:plan)   cmd+=(--mode plan) ;;
-  codex:auto)    cmd+=(--dangerously-bypass-approvals-and-sandbox) ;;
+  codex:auto)    cmd+=(--sandbox workspace-write --ask-for-approval on-request) ;;
   codex:plan)    cmd+=(--sandbox read-only) ;;
-  copilot:auto)  cmd+=(--allow-all-tools --allow-all-paths --allow-all-urls --no-ask-user) ;;
+  copilot:auto)  cmd+=(--mode autopilot) ;;
   copilot:plan)  cmd+=(--mode plan) ;;
-  opencode:auto) cmd+=(--auto) ;;
+  opencode:auto) cmd+=(--agent build --auto) ;;
   opencode:plan) cmd+=(--agent plan) ;;
 esac
 
