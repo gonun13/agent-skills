@@ -47,6 +47,7 @@ skills/
 ├── _template.md
 ├── changelog.md
 ├── janitor.md
+├── nta-scan.md
 └── repo-recon.md
 ```
 
