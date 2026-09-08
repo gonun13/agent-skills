@@ -47,9 +47,12 @@ skills/
 ├── _template.md
 ├── adversarial-review.md
 ├── changelog.md
+├── diagnose.md
+├── docs-drift.md
 ├── janitor.md
 ├── nta-scan.md
-└── repo-recon.md
+├── repo-recon.md
+└── stack-advise.md
 ```
 
 The filename is the name shown in the menu. Files beginning with `_` are not
