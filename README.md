@@ -45,6 +45,7 @@ Skills are single Markdown files:
 ```text
 skills/
 ├── _template.md
+├── adversarial-review.md
 ├── changelog.md
 ├── janitor.md
 ├── nta-scan.md
