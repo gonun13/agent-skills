@@ -49,6 +49,7 @@ skills/
 ├── changelog.md
 ├── diagnose.md
 ├── docs-drift.md
+├── improve-seo.md
 ├── janitor.md
 ├── nta-scan.md
 ├── repo-recon.md
