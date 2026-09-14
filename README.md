@@ -51,6 +51,7 @@ skills/
 ├── docs-drift.md
 ├── improve-seo.md
 ├── janitor.md
+├── kickoff.md
 ├── nta-scan.md
 ├── repo-recon.md
 └── stack-advise.md
