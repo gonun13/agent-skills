@@ -30,23 +30,26 @@ Check first:
 
 ## Steps
 
-1. Interview the operator in loose, grouped batches — not one long form, and
-   not one question at a time either. "You decide" is always a valid answer to
-   any question; treat it as permission to make the call yourself and record it
-   as an assumption, not as a blocker.
-   - **What & why** — project name, one-line pitch, the problem it solves,
-     who it's for, what success looks like.
-   - **Scope** — the single happy-path flow that must work end to end; what's
-     in the MVP; explicit non-goals (what it deliberately will not do, at least
-     at first).
-   - **Constraints** — platform/runtime target, deployment or hosting
-     preference, team size and skill level, timeline, budget, and anything
-     mandated or forbidden (compliance, an existing company stack, a client
-     requirement).
-   - **Stack & scale** — preferred languages/frameworks if the operator has
-     one; expected scale (prototype, internal tool, public production
-     service); integrations or external dependencies (auth, payments, third
-     -party APIs); how sensitive the data is.
+1. Interview the operator one question at a time, in this order. Ask a single
+   question, wait for the answer, then ask the next — never dump the list as
+   one message. Let each answer inform how you phrase or skip later ones (a
+   named framework can settle the stack question before you ask it). "You
+   decide" is always a valid answer; treat it as permission to make the call
+   yourself and record it as an assumption, not as a blocker.
+   - Project name and a one-line pitch.
+   - What problem it solves and what success looks like.
+   - Who it's for.
+   - The single happy-path flow that must work end to end.
+   - What's in the MVP, and what's explicitly out (non-goals) at least at
+     first.
+   - Platform/runtime target and deployment or hosting preference.
+   - Team size, skill level, and timeline.
+   - Anything mandated or forbidden — budget, compliance, an existing company
+     stack, a client requirement.
+   - Preferred languages/frameworks, if any.
+   - Expected scale — prototype, internal tool, or public production service.
+   - Integrations or external dependencies (auth, payments, third-party APIs)
+     and how sensitive the data is.
 2. For anything left open, weakly held, or answered "you decide," search the
    web for what's currently recommended for a project of this shape and scale
    — don't rely on memorized defaults, since they go stale. Note what you
@@ -70,7 +73,8 @@ Check first:
 - This produces a document, not a project. Do not scaffold files, run a
   generator, `git init`, or install dependencies — that's follow-up work the
   operator asks for separately, once the doc is agreed.
-- Don't ask everything at once, and don't block on an answer — a shrug or "you
+- One question at a time, in order, waiting for each answer before asking the
+  next — never a form dump. Don't block on an answer, though: a shrug or "you
   decide" moves you forward with a recorded assumption instead.
 - Decisions that are expensive to reverse later (primary language, hosting/data
   residency, monolith vs multi-service, anything compliance-driven) are worth
