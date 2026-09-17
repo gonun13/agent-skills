@@ -54,6 +54,7 @@ skills/
 ├── kickoff.md
 ├── nta-scan.md
 ├── repo-recon.md
+├── spec-driven-dev.md
 └── stack-advise.md
 ```
 
