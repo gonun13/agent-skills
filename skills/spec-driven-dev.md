@@ -1,6 +1,6 @@
 ---
 name: spec-driven-dev
-description: Scopes and writes a flexible spec-driven development doc set under spec/ — PROJECT, DOMAIN, ARCHITECTURE, UIUX, DATA, BEHAVIOUR, DECISIONS, TESTS — pulling existing README and docs into the conversation, adapting depth to greenfield vs completing what already exists, and wiring AGENTS.md so agents respect the precedence order. Use when setting up or completing project specs, SDD docs, or a spec/ folder.
+description: Scopes and writes a flexible spec-driven development doc set under spec/ — PROJECT (uppercase), then lowercase domain, architecture, ui-ux, data, behaviour, decisions, tests — pulling existing README and docs into the conversation, adapting depth to greenfield vs completing what already exists, and wiring AGENTS.md so agents respect the precedence order. Use when setting up or completing project specs, SDD docs, or a spec/ folder.
 ---
 
 # Spec-driven development
@@ -22,9 +22,9 @@ Check first, before asking anything:
   re-ask.
 - Project shape: empty/near-empty folder, early codebase, or mature product.
   That chooses the mode (see Steps).
-- Surfaces that imply which docs earn a file: UI present → UIUX likely;
-  persistence or schemas → DATA; multiple subsystems or flows → BEHAVIOUR;
-  prior ADRs or contested choices → DECISIONS; automated or manual QA → TESTS.
+- Surfaces that imply which docs earn a file: UI present → ui-ux likely;
+  persistence or schemas → data; multiple subsystems or flows → behaviour;
+  prior ADRs or contested choices → decisions; automated or manual QA → tests.
 - Do not invent a second documentation home. Everything this skill produces
   lives under `spec/`, except the AGENTS.md pointer at the project root.
 
@@ -32,19 +32,22 @@ Check first, before asking anything:
 
 Produce only what the project needs. Filenames and roles:
 
+Only `PROJECT.md` is uppercase — it signals the top-level authority. Every
+other path under `spec/` is lowercase (hyphenated where needed).
+
 | Path | Audience | Contents |
 | --- | --- | --- |
 | `spec/PROJECT.md` | everyone | Main goal, main purpose, main requirements. |
-| `spec/DOMAIN.md` | project manager | Entities, concepts, rules, invariants. |
-| `spec/ARCHITECTURE.md` | tech | Structure, components, boundaries, interfaces, APIs, events, constraints. |
-| `spec/UIUX.md` | designer | Look and feel, themes, anti-patterns, best practices, usability and accessibility. |
-| `spec/DATA.md` | tech | Contracts, models and persistence. |
-| `spec/BEHAVIOUR/` | tech / PM | Folder with detailed behaviour for the project systems (one file per system or flow). |
-| `spec/DECISIONS/` | tech / PM | Decision records for changes to the initial spec. |
-| `spec/TESTS.md` | QA | How to test, how to verify acceptance criteria, when to test. |
+| `spec/domain.md` | project manager | Entities, concepts, rules, invariants. |
+| `spec/architecture.md` | tech | Structure, components, boundaries, interfaces, APIs, events, constraints. |
+| `spec/ui-ux.md` | designer | Look and feel, themes, anti-patterns, best practices, usability and accessibility. |
+| `spec/data.md` | tech | Contracts, models and persistence. |
+| `spec/behaviour/` | tech / PM | Folder with detailed behaviour for the project systems (one file per system or flow). |
+| `spec/decisions/` | tech / PM | Decision records for changes to the initial spec. |
+| `spec/tests.md` | QA | How to test, how to verify acceptance criteria, when to test. |
 
-Not every row is required. Skip UIUX for a headless library; skip DATA when
-there is no persistence story worth locking; start DECISIONS empty or omit
+Not every row is required. Skip ui-ux for a headless library; skip data when
+there is no persistence story worth locking; start decisions empty or omit
 until a change needs a record. Prefer fewer accurate files over a complete
 skeleton of stubs.
 
@@ -73,16 +76,16 @@ skeleton of stubs.
    record it as an assumption.
 
 4. **Fill depth by mode.**
-   - Scratch: PROJECT first, then light DOMAIN and ARCHITECTURE if useful;
-     defer UIUX/DATA/BEHAVIOUR/TESTS until there is something concrete to say.
+   - Scratch: PROJECT first, then light domain and architecture if useful;
+     defer ui-ux/data/behaviour/tests until there is something concrete to say.
    - Complete / Refresh: write gap sections at the fidelity the rest of the
      repo already uses — match tone and specificity, do not inflate.
 
-5. **Write under `spec/`.** Create only the agreed files. For `BEHAVIOUR/`,
-   one markdown file per system or primary flow (`spec/BEHAVIOUR/<system>.md`).
-   For `DECISIONS/`, use short records (`spec/DECISIONS/NNNN-short-title.md`)
+5. **Write under `spec/`.** Create only the agreed files. For `behaviour/`,
+   one markdown file per system or primary flow (`spec/behaviour/<system>.md`).
+   For `decisions/`, use short records (`spec/decisions/NNNN-short-title.md`)
    when capturing a change to the initial spec; if none yet, either omit the
-   folder or add a one-line `spec/DECISIONS/README.md` explaining when to add
+   folder or add a one-line `spec/decisions/README.md` explaining when to add
    one — do not invent fake decisions.
 
 6. **Wire agents.** Create or update `AGENTS.md` at the project root so it
@@ -90,10 +93,10 @@ skeleton of stubs.
    that agents must respect specs in this order (higher wins on conflict):
 
    1. PROJECT
-   2. DOMAIN, ARCHITECTURE
-   3. UIUX, DATA
-   4. BEHAVIOUR, DECISIONS
-   5. TESTS
+   2. domain, architecture
+   3. ui-ux, data
+   4. behaviour, decisions
+   5. tests
 
    If `AGENTS.md` already has other rules, add a clear **Spec-driven
    development** section rather than replacing the file. Point at the paths
@@ -140,10 +143,10 @@ skeleton of stubs.
    When specs disagree, respect them in this order:
 
    1. PROJECT
-   2. DOMAIN, ARCHITECTURE
-   3. UIUX, DATA
-   4. BEHAVIOUR, DECISIONS
-   5. TESTS
+   2. domain, architecture
+   3. ui-ux, data
+   4. behaviour, decisions
+   5. tests
 
    Implement and review against these docs before inventing behaviour.
    ```
