@@ -1,6 +1,6 @@
 ---
 name: docs-drift
-description: Checks the README, docs, help text, and example config against what the code actually does, and reports every place they disagree. Use when documentation may have fallen behind the code, or before a release.
+description: Checks the README, spec, docs, help text, and example config against what the code actually does, and reports every place they disagree. Use when documentation may have fallen behind the code, or before a release.
 ---
 
 # Docs drift
@@ -15,8 +15,8 @@ mentions — each as a `path:line` pair the operator can act on.
 
 Check first:
 
-- Where the prose lives: `README`, `docs/`, `CONTRIBUTING`, `CHANGELOG`,
-  `AGENTS.md` or `CLAUDE.md`, man pages, docstrings on the public surface,
+- Where the prose lives: `README`, `spec/`, `docs/`, `CONTRIBUTING`, `CHANGELOG` or
+  `AGENTS.md`, man pages, docstrings on the public surface,
   and inline `--help` or usage text.
 - Where the truth lives: the CLI or argument parser, the route table, the
   config loader, the environment-variable reads, the package manifest's

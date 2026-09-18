@@ -17,7 +17,7 @@ Check first:
 - The symptom. If the operator has not described one, ask for it, or find it:
   a failing test, a red CI job, a stack trace in the logs, an open issue. Get
   the exact error text, the input that triggers it, and the expected behaviour
-  before doing anything else.
+  before doing anything else. If you can't find it, don't move, ask user or abort!
 - How the project runs its tests and a single test in isolation, so the
   feedback loop is seconds rather than minutes.
 - Whether the bug is new: `git log` and `git bisect` around the affected code
