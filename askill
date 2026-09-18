@@ -94,9 +94,9 @@ project_name="${project_names[$PICKED]}"
 provider_names=()
 provider_bins=()
 provider_labels=()
-known_names=(claude cursor codex copilot opencode)
-known_bins=(claude cursor-agent codex copilot opencode)
-known_labels=('Claude Code' 'Cursor Agent' 'Codex CLI' 'GitHub Copilot CLI' 'opencode')
+known_names=(claude cursor codex copilot mistral opencode)
+known_bins=(claude cursor-agent codex copilot vibe opencode)
+known_labels=('Claude Code' 'Cursor Agent' 'Codex CLI' 'GitHub Copilot CLI' 'Mistral Vibe' 'opencode')
 for i in "${!known_names[@]}"; do
   if command -v "${known_bins[$i]}" >/dev/null 2>&1; then
     provider_names+=("${known_names[$i]}")
@@ -137,6 +137,8 @@ case "$provider:$mode" in
   codex:plan)    cmd+=(--sandbox read-only) ;;
   copilot:auto)  cmd+=(--mode autopilot) ;;
   copilot:plan)  cmd+=(--mode plan) ;;
+  mistral:auto)  cmd+=(--agent accept-edits) ;;
+  mistral:plan)  cmd+=(--agent plan) ;;
   opencode:auto) cmd+=(--agent build --auto) ;;
   opencode:plan) cmd+=(--agent plan) ;;
 esac

@@ -83,6 +83,7 @@ Only installed CLIs appear in the menu:
 - Cursor Agent (`cursor-agent`)
 - Codex CLI (`codex`)
 - GitHub Copilot CLI (`copilot`)
+- Mistral Vibe (`vibe`)
 - opencode (`opencode`)
 
 Each mode maps to that CLI's own equivalent:
@@ -93,6 +94,7 @@ Each mode maps to that CLI's own equivalent:
 | cursor-agent | `--mode plan` | `--sandbox enabled` |
 | codex | `--sandbox read-only` | `--sandbox workspace-write --ask-for-approval on-request` |
 | copilot | `--mode plan` | `--mode autopilot` |
+| Mistral Vibe | `--agent plan` | `--agent accept-edits` |
 | opencode | `--agent plan` | `--agent build --auto` |
 
 `auto` is the provider's auto mode, not its bypass: the agent works without

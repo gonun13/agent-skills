@@ -57,6 +57,7 @@ run_case() {
   local output
 
   [[ "$provider" == cursor ]] && provider_bin=cursor-agent
+  [[ "$provider" == mistral ]] && provider_bin=vibe
   [[ "$mode" == plan ]] && mode_choice=2
 
   mkdir -p "$root/skills" "$stubs" "$project"
@@ -116,6 +117,8 @@ run_case codex auto $'arg=--sandbox\narg=workspace-write\narg=--ask-for-approval
 run_case codex plan $'arg=--sandbox\narg=read-only'
 run_case copilot auto $'arg=--mode\narg=autopilot'
 run_case copilot plan $'arg=--mode\narg=plan'
+run_case mistral auto $'arg=--agent\narg=accept-edits'
+run_case mistral plan $'arg=--agent\narg=plan'
 run_case opencode auto $'arg=--agent\narg=build\narg=--auto'
 run_case opencode plan $'arg=--agent\narg=plan'
 
