@@ -40,26 +40,38 @@ workspace/
 └── project-two/
 ```
 
-Skills are single Markdown files:
+Skills are folders containing a `SKILL.md`:
 
 ```text
 skills/
-├── _template.md
-├── adversarial-review.md
-├── changelog.md
-├── diagnose.md
-├── docs-drift.md
-├── improve-seo.md
-├── janitor.md
-├── kickoff.md
-├── nta-scan.md
-├── repo-recon.md
-├── spec-driven-dev.md
-└── stack-advise.md
+├── _template/
+│   └── SKILL.md
+├── adversarial-review/
+│   └── SKILL.md
+├── changelog/
+│   └── SKILL.md
+├── diagnose/
+│   └── SKILL.md
+├── docs-drift/
+│   └── SKILL.md
+├── improve-seo/
+│   └── SKILL.md
+├── janitor/
+│   └── SKILL.md
+├── kickoff/
+│   └── SKILL.md
+├── nta-scan/
+│   └── SKILL.md
+├── repo-recon/
+│   └── SKILL.md
+├── spec-driven-dev/
+│   └── SKILL.md
+└── stack-advise/
+    └── SKILL.md
 ```
 
-The filename is the name shown in the menu. Files beginning with `_` are not
-listed.
+The folder name is the name shown in the menu. Folders beginning with `_` are
+not listed.
 
 ## Usage
 
@@ -106,9 +118,9 @@ confirmation step. `plan` is the read-only choice.
 
 ## Writing a skill
 
-Copy `skills/_template.md` to `skills/<skill-name>.md`, update its `name` and
-`description`, and write the instructions. `askill` passes the complete file to
-the provider as the first prompt.
+Copy `skills/_template/` to `skills/<skill-name>/`, update the `name` and
+`description` in `SKILL.md`, and write the instructions. `askill` passes the
+skill body (frontmatter stripped) to the provider as the first prompt.
 
 ## Development
 

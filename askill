@@ -67,9 +67,11 @@ shopt -s nullglob
 
 skill_files=()
 skill_names=()
-for file in "$root"/skills/*.md; do
-  name="$(basename "$file" .md)"
+for dir in "$root"/skills/*/; do
+  name="$(basename "$dir")"
   [[ "$name" == _* ]] && continue
+  file="$dir/SKILL.md"
+  [[ -f "$file" ]] || continue
   skill_files+=("$file")
   skill_names+=("$name")
 done

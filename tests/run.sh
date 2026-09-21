@@ -65,7 +65,8 @@ run_case() {
   cp "$repo/askill" "$root/askill"
   chmod +x "$root/askill"
 
-  cat > "$root/skills/example.md" <<'EOF'
+  mkdir -p "$root/skills/example" "$root/skills/_template"
+  cat > "$root/skills/example/SKILL.md" <<'EOF'
 ---
 name: example
 description: UNIQUE_FRONTMATTER
@@ -73,7 +74,7 @@ description: UNIQUE_FRONTMATTER
 
 UNIQUE_SKILL_INSTRUCTION
 EOF
-  printf 'must not appear in the menu\n' > "$root/skills/_template.md"
+  printf 'must not appear in the menu\n' > "$root/skills/_template/SKILL.md"
 
   cat > "$stubs/$provider_bin" <<'EOF'
 #!/usr/bin/env bash
