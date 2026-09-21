@@ -64,6 +64,11 @@ skills/
 │   └── SKILL.md
 ├── repo-recon/
 │   └── SKILL.md
+├── software-architecture/
+│   ├── SKILL.md
+│   └── principles/
+│       ├── 01-separation-of-concerns.md
+│       └── ...
 ├── spec-driven-dev/
 │   └── SKILL.md
 └── stack-advise/
@@ -121,6 +126,11 @@ confirmation step. `plan` is the read-only choice.
 Copy `skills/_template/` to `skills/<skill-name>/`, update the `name` and
 `description` in `SKILL.md`, and write the instructions. `askill` passes the
 skill body (frontmatter stripped) to the provider as the first prompt.
+
+A skill folder may carry supporting files beside its `SKILL.md`. Only the
+`SKILL.md` body is sent as the prompt, so anything else has to be findable
+by path from the selected project's working directory — which is why the
+layout above puts this repository beside the projects it is run against.
 
 ## Development
 
