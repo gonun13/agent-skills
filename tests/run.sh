@@ -81,6 +81,9 @@ EOF
 {
   printf 'cwd=%s\n' "$PWD"
   printf 'arg=%s\n' "$@"
+  if [[ -n "${VIBE_ENABLE_UPDATE_CHECKS+x}" ]]; then
+    printf 'env=VIBE_ENABLE_UPDATE_CHECKS=%s\n' "$VIBE_ENABLE_UPDATE_CHECKS"
+  fi
 } > "$ASKILL_CAPTURE"
 EOF
   chmod +x "$stubs/$provider_bin"
@@ -118,8 +121,25 @@ run_case codex auto $'arg=--sandbox\narg=workspace-write\narg=--ask-for-approval
 run_case codex plan $'arg=--sandbox\narg=read-only'
 run_case copilot auto $'arg=--mode\narg=autopilot'
 run_case copilot plan $'arg=--mode\narg=plan'
-run_case mistral auto $'arg=--agent\narg=accept-edits'
-run_case mistral plan $'arg=--agent\narg=plan'
+run_case mistral auto $'arg=--agent\narg=accept-edits\narg=--trust'
+run_case mistral plan $'arg=--agent\narg=plan\narg=--trust'
+
+# Mistral also disables vibe's blocking startup update prompt via env.
+mistral_env_check() {
+  local mode="$1"
+  local case_dir="$tmp/mistral-$mode"
+  local recorded
+  recorded="$(cat "$case_dir/capture")"
+  if assert_contains "$recorded" 'env=VIBE_ENABLE_UPDATE_CHECKS=false'; then
+    printf 'ok - mistral %s update-checks env\n' "$mode"
+    passed=$((passed + 1))
+  else
+    printf 'not ok - mistral %s update-checks env\n' "$mode"
+    failed=$((failed + 1))
+  fi
+}
+mistral_env_check auto
+mistral_env_check plan
 run_case opencode auto $'arg=--agent\narg=build\narg=--auto'
 run_case opencode plan $'arg=--agent\narg=plan'
 

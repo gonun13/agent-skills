@@ -54,6 +54,8 @@ skills/
 │   └── SKILL.md
 ├── docs-drift/
 │   └── SKILL.md
+├── good-readme/
+│   └── SKILL.md
 ├── improve-seo/
 │   └── SKILL.md
 ├── janitor/
@@ -111,12 +113,16 @@ Each mode maps to that CLI's own equivalent:
 | cursor-agent | `--mode plan` | `--sandbox enabled` |
 | codex | `--sandbox read-only` | `--sandbox workspace-write --ask-for-approval on-request` |
 | copilot | `--mode plan` | `--mode autopilot` |
-| Mistral Vibe | `--agent plan` | `--agent accept-edits` |
+| Mistral Vibe | `--agent plan --trust` | `--agent accept-edits --trust` |
 | opencode | `--agent plan` | `--agent build --auto` |
 
 `auto` is the provider's auto mode, not its bypass: the agent works without
 stopping at every approval, but the CLI's sandbox and deny rules stay in force.
 No permission-bypass flag is ever passed, and a test asserts it.
+
+For Mistral Vibe, askill also passes `--trust` and disables the startup update
+prompt: the project was already chosen in the menu, and an "Update now" exit
+would drop the skill launch entirely.
 
 It still writes to the project you selected — there is no worktree or
 confirmation step. `plan` is the read-only choice.

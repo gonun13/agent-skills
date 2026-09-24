@@ -146,6 +146,17 @@ case "$provider:$mode" in
 esac
 
 case "$provider" in
+  # The project was already chosen in this menu. Skip vibe's trust dialog so
+  # a decline cannot abort the session before the skill prompt is sent.
+  # Also skip the blocking startup update prompt: choosing "Update now"
+  # exits vibe and drops the askill launch (skill + mode) entirely.
+  mistral)
+    cmd+=(--trust)
+    export VIBE_ENABLE_UPDATE_CHECKS=false
+    ;;
+esac
+
+case "$provider" in
   copilot)  cmd+=(--interactive "$prompt") ;;
   opencode) cmd+=(--prompt "$prompt") ;;
   *)        cmd+=("$prompt") ;;
