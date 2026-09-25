@@ -11,22 +11,35 @@ usage() {
   cat <<'EOF'
 Usage: askill
 
-Choose a skill, sibling project, installed provider, and mode, then open the
-provider's interactive CLI in that project with the skill as its first prompt.
+Choose a skill, project (a sibling folder or this repository), installed
+provider, and mode, then open the provider's interactive CLI in that project
+with the skill as its first prompt.
 
 Modes:
   auto  The provider's own auto mode: works without stopping at every
         approval, with its sandbox and deny rules still in force.
   plan  The provider's read-only planning mode.
+
+In each menu, use the arrow keys (left/right jump to the first/last entry) and
+Enter, or type the entry's number.
 EOF
 }
 
 pick() {
   local title="$1"
   shift
-  local choice number
 
   printf '\n%s\n' "$title" >&2
+  if [[ -t 0 && -t 2 ]]; then
+    pick_keys "$@"
+  else
+    pick_line "$@"
+  fi
+}
+
+pick_line() {
+  local choice number
+
   local i=1
   for choice in "$@"; do
     printf '  %d) %s\n' "$i" "$choice" >&2
@@ -46,6 +59,68 @@ pick() {
          printf 'Enter a number from 1 to %d.\n' "$#" >&2 ;;
     esac
   done
+}
+
+# Up/down move one row, left/right jump to the first/last row, digits jump to
+# that number, and Enter chooses the highlighted row.
+pick_keys() {
+  local esc=$'\033'
+  local current=0 typed='' key next choice i
+
+  printf '%s[?25l' "$esc" >&2
+  trap 'printf "\033[?25h" >&2' EXIT
+  trap 'printf "\n" >&2; exit 130' INT
+
+  while true; do
+    i=0
+    for choice in "$@"; do
+      if (( i == current )); then
+        printf '%s[2K%s[7m> %d) %s%s[0m\n' "$esc" "$esc" "$((i + 1))" "$choice" "$esc" >&2
+      else
+        printf '%s[2K  %d) %s\n' "$esc" "$((i + 1))" "$choice" >&2
+      fi
+      i=$((i + 1))
+    done
+    printf '%s[2K> %s' "$esc" "$typed" >&2
+
+    IFS= read -rsn1 key || die 'selection cancelled'
+    case "$key" in
+      '') break ;;
+      $'\004') printf '\n' >&2; die 'selection cancelled' ;;
+      "$esc")
+        typed=''
+        IFS= read -rsn1 -t 1 key || key=''
+        if [[ "$key" == '[' || "$key" == O ]]; then
+          IFS= read -rsn1 -t 1 key || key=''
+          case "$key" in
+            A) (( current > 0 )) && current=$((current - 1)) ;;
+            B) (( current < $# - 1 )) && current=$((current + 1)) ;;
+            C) current=$(($# - 1)) ;;
+            D) current=0 ;;
+          esac
+        fi
+        ;;
+      [0-9])
+        for next in "$typed$key" "$key" ''; do
+          [[ -z "$next" ]] && break
+          if (( 10#$next >= 1 && 10#$next <= $# )); then
+            current=$((10#$next - 1))
+            break
+          fi
+        done
+        typed="$next"
+        ;;
+      $'\177'|$'\b')
+        typed="${typed%?}"
+        [[ -n "$typed" ]] && current=$((10#$typed - 1))
+        ;;
+    esac
+    printf '\r%s[%dA' "$esc" "$#" >&2
+  done
+
+  printf '\r%s[2K> %d\n%s[?25h' "$esc" "$((current + 1))" "$esc" >&2
+  trap - EXIT INT
+  PICKED=$current
 }
 
 if (( $# > 0 )); then
@@ -84,11 +159,9 @@ projects=()
 project_names=()
 for candidate in "$root"/../*/; do
   project="$(cd -P "$candidate" && pwd)"
-  [[ "$project" == "$root" ]] && continue
   projects+=("$project")
   project_names+=("$(basename "$project")")
 done
-(( ${#projects[@]} > 0 )) || die "no sibling projects found beside $root"
 pick 'Project' "${project_names[@]}"
 project="${projects[$PICKED]}"
 project_name="${project_names[$PICKED]}"

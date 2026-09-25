@@ -47,8 +47,11 @@ run_case() {
   local provider="$1"
   local mode="$2"
   local expected="$3"
+  local target="${4:-sibling}"
   local provider_bin="$provider"
   local mode_choice=1
+  # The menu is alphabetical: agent-skills is 1, sample-project is 2.
+  local project_choice=2
   local case_dir="$tmp/$provider-$mode"
   local root="$case_dir/agent-skills"
   local project="$case_dir/sample-project"
@@ -59,9 +62,18 @@ run_case() {
   [[ "$provider" == cursor ]] && provider_bin=cursor-agent
   [[ "$provider" == mistral ]] && provider_bin=vibe
   [[ "$mode" == plan ]] && mode_choice=2
+  if [[ "$target" == self ]]; then
+    project_choice=1
+    case_dir="$case_dir-self"
+    root="$case_dir/agent-skills"
+    project="$case_dir/sample-project"
+    stubs="$root/stubs"
+    capture="$case_dir/capture"
+  fi
 
   mkdir -p "$root/skills" "$stubs" "$project"
   project="$(cd -P "$project" && pwd)"
+  [[ "$target" == self ]] && project="$(cd -P "$root" && pwd)"
   cp "$repo/askill" "$root/askill"
   chmod +x "$root/askill"
 
@@ -89,7 +101,7 @@ EOF
   chmod +x "$stubs/$provider_bin"
 
   output="$(
-    printf '1\n1\n1\n%s\n' "$mode_choice" |
+    printf '1\n%s\n1\n%s\n' "$project_choice" "$mode_choice" |
       env PATH="$stubs:/usr/bin:/bin" ASKILL_CAPTURE="$capture" "$root/askill" 2>&1
   )" || {
     printf 'not ok - %s %s did not launch\n%s\n' "$provider" "$mode" "$output"
@@ -105,10 +117,10 @@ EOF
      assert_absent "$recorded" 'UNIQUE_FRONTMATTER' &&
      assert_no_bypass "$recorded" &&
      [[ "$output" != *'_template'* ]]; then
-    printf 'ok - %s %s\n' "$provider" "$mode"
+    printf 'ok - %s %s%s\n' "$provider" "$mode" "${4:+ ($target)}"
     passed=$((passed + 1))
   else
-    printf 'not ok - %s %s\n' "$provider" "$mode"
+    printf 'not ok - %s %s%s\n' "$provider" "$mode" "${4:+ ($target)}"
     failed=$((failed + 1))
   fi
 }
@@ -142,6 +154,9 @@ mistral_env_check auto
 mistral_env_check plan
 run_case opencode auto $'arg=--agent\narg=build\narg=--auto'
 run_case opencode plan $'arg=--agent\narg=plan'
+
+# The askill repository itself is listed among its siblings.
+run_case claude plan $'arg=--permission-mode\narg=plan' self
 
 help="$("$repo/askill" --help)"
 if assert_contains "$help" 'Usage: askill'; then
