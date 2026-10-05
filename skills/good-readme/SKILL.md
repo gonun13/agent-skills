@@ -66,6 +66,9 @@ Check first:
 7. Validate: check relative links, anchors, image paths, and fences; verify
    commands against scripts and entry points; run safe examples where feasible.
 
+In plan mode, the plan is the new README in full, plus what was removed or
+moved and where it went.
+
 ## Constraints
 
 - Scope is the main README. Do not change code, dependencies, settings, or

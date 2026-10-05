@@ -70,7 +70,8 @@ Check first:
 
 ## Constraints
 
-- Read only. Recommend; do not install, configure, or scaffold anything.
+- Read only, apart from the report file. Recommend; do not install,
+  configure, or scaffold anything.
 - Never recommend replacing the language, framework, database, or hosting.
   Those are decisions this project has made; work within them.
 - Do not recommend what is already there. If something is present but
@@ -94,6 +95,9 @@ each recommendation names one tool or practice, one first step, evidence,
 effort, and payoff, and the list is ranked and at most ten items long.
 
 ## Output
+
+Save the report to `STACK-ADVICE.md` at the repo root, replacing any earlier
+one.
 
 Open with two or three lines: what the project is, its stage, and where its
 tooling stands overall.

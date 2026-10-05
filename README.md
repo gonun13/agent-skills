@@ -52,13 +52,17 @@ Opening Claude Code in project-one with adversarial-review (plan).
 `askill` then opens the provider's normal interactive CLI in that project with
 the skill as the first prompt. Everything after launch belongs to the provider.
 
-`auto` is the provider's own auto mode, not a permission bypass, but it still
-writes to the selected project with no worktree or confirmation step. `plan` is
-the read-only choice. The per-provider flags are in [`askill`](askill).
+`auto` is the provider's own auto mode, not a permission bypass: the skill
+makes its changes, or saves its report to a file, in the selected project with
+no worktree or confirmation step. `plan` opens the provider's plan mode, so the
+skill's changes or report come back as a plan to review and edit before
+anything runs; where a CLI has no plan mode, the plan is written to
+`<skill>-plan.md`. The per-provider flags are in [`askill`](askill).
 
 To write a skill, copy `skills/_template/` to `skills/<skill-name>/` and edit
-its `SKILL.md`. Only the `SKILL.md` body is sent, so any supporting files must
-be referenced by a path that resolves from the project directory.
+its `SKILL.md`. Only the `SKILL.md` body is sent, headed by the skill's
+directory and the mode, so supporting files are referenced by their path
+inside the skill directory.
 
 Tests: `./tests/run.sh` and `shellcheck askill tests/run.sh`.
 

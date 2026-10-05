@@ -17,8 +17,10 @@ with the skill as its first prompt.
 
 Modes:
   auto  The provider's own auto mode: works without stopping at every
-        approval, with its sandbox and deny rules still in force.
-  plan  The provider's read-only planning mode.
+        approval, with its sandbox and deny rules still in force. The skill
+        makes its changes, or saves its report to a file.
+  plan  The provider's planning mode: the skill's changes or report come
+        back as a plan to review and edit before anything runs.
 
 In each menu, use the arrow keys (left/right jump to the first/last entry) and
 Enter, or type the entry's number.
@@ -199,6 +201,21 @@ prompt="$(awk '
                          { body = 1; print }
 ' "$skill_file")"
 [[ -n "$prompt" ]] || die "$skill_file has no instructions"
+
+# Only the body is sent, so the agent is told where the skill's supporting
+# files live and which mode it was opened in, rather than left to guess.
+case "$mode" in
+  auto) mode_note="Mode: auto. Carry the skill through: make the changes it \
+calls for. A skill that changes no code saves its report to the file it names." ;;
+  plan) mode_note="Mode: plan. Do only what needs no writes, then present what \
+you would change, or the report you would save, as a plan for the operator to \
+review and edit before anything runs. Use this CLI's plan mode for it; if it \
+has none, write the plan to ${skill_name}-plan.md at the project root and stop." ;;
+esac
+prompt="Skill directory: $root/skills/$skill_name
+$mode_note
+
+$prompt"
 cmd=("$provider_bin")
 
 # auto is each CLI's own auto mode -- it works without stopping at every

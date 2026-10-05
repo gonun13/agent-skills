@@ -17,14 +17,11 @@ checks.
 **Find the principle files first.** Each one carries the principle, why it
 holds, what it looks like in practice, how to tell it is being violated, and a
 `## Pass` section giving what to look for, what a safe fix is, and where to
-stop. Nothing is loaded for you. Try, in order:
+stop. Nothing is loaded for you: they are in `principles/` inside the skill
+directory — the path given at the top of this prompt, or the folder holding
+this `SKILL.md`.
 
-1. `principles/` beside this `SKILL.md`.
-2. `../agent-skills/skills/software-architecture/principles/` — this repo is
-   normally cloned beside the projects it is run against.
-3. Any `software-architecture-principles/` already vendored inside the project.
-
-If none resolve, say so once and work from the index below alone. That is the
+If that does not resolve, say so once and work from the index below alone. That is the
 degraded mode: still useful, but cite the index rather than inventing detail,
 and never invent a thirteenth principle.
 
@@ -49,21 +46,23 @@ is not a ranking — a real decision usually turns on two or three at once.
 ## Steps
 
 1. **Pick the mode** and state it in one line before touching anything:
-   - The operator named a mode, or named a principle by number or title → obey
-     that.
-   - Otherwise, writes are permitted → **refactor**.
-   - Otherwise, the session is read-only → **document**.
-   - Otherwise → **ask**: list the twelve with their numbers, take a selection
-     (`all`, or e.g. `04 09`), and ask refactor-or-document once. Ask once,
-     then commit. This is a selection, not an interview.
+   - **refactor** by default.
+   - **document** when the operator asked for a review or a write-up rather
+     than changes.
+   - **narrowed** when the operator named principles by number or title: run
+     refactor or document over only those.
+
+   In plan mode, survey and judge as usual; the refactor you would make, or
+   the document you would save, is the plan.
 
 2. **Survey.** In every mode. Say what the scope is — the whole tree, a
    directory, or a change (`git diff`, a branch) — before reading. Then:
    - Read what the project has already decided: `spec/`, ADRs, `AGENTS.md`,
      `CLAUDE.md`, `README`, `docs/`. A departure that was chosen deliberately
      and written down is an answer, not a finding.
-   - Learn the build, test and lint commands and run them once, so you know
-     which failures you inherited.
+   - In refactor mode, learn the build, test and lint commands and run them
+     once before the first edit, so you know which failures you inherited.
+     Document mode changes nothing, so it skips the run.
 
 3. **Read the principle files in scope** — all twelve, or only the ones
    selected — before judging anything. Every finding cites the file it came
@@ -79,13 +78,12 @@ is not a ranking — a real decision usually turns on two or three at once.
 
 5. **Document.** The same survey with no edits: rank the gaps by what leaving
    them costs, each with `path:line`, the principle file, the symptom from that
-   file's "How to tell it is being violated", and the size of the fix. Then
-   offer to write it — `spec/decisions/NNNN-<short-title>.md` if that tree
-   exists, otherwise `docs/architecture-review.md` — and write it only if the
-   operator says yes.
+   file's "How to tell it is being violated", and the size of the fix. Save
+   it to `spec/decisions/NNNN-<short-title>.md` if that tree exists,
+   otherwise `docs/architecture-review.md`.
 
-6. **Ask** runs step 4 or 5 narrowed to the chosen principles, and says which
-   principles were not examined.
+6. **Narrowed** runs step 4 or 5 over the chosen principles only, and says
+   which principles were not examined.
 
 7. **Name the conflicts.** Where two principles pulled opposite ways, say which
    one gave way and why. Two principles disagreeing is the normal case, not a
@@ -102,16 +100,15 @@ is not a ranking — a real decision usually turns on two or three at once.
   formatting, test framework, deployment target or process.
 - A recorded decision that departs from a principle has answered the question.
   What these outrank is a preference nobody wrote down.
-- In document mode, write no file until the operator says yes to it.
 - No new dependencies, services, caches, or abstractions.
   `11-prefer-simplicity.md` applies to this skill's own output.
 
 ## Done when
 
 The mode and scope were stated; every principle in scope was either applied or
-explicitly deferred with a reason; the project's build, test and lint commands
-give the same result they gave in step 2; and nothing was changed past a
-`Stop at`.
+explicitly deferred with a reason; after a refactor, the project's build, test
+and lint commands give the same result they gave in step 2; and nothing was
+changed past a `Stop at`.
 
 ## Output
 
@@ -128,4 +125,4 @@ Close with:
   settle it.
 - **Conflicts** — where two principles pulled opposite ways, which gave way,
   and why.
-- **Not examined** — principles out of scope, in ask mode.
+- **Not examined** — principles out of scope, when narrowed.

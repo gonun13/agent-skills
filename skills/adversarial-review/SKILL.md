@@ -35,7 +35,13 @@ Check first:
    env vars, config files, CLI args, subprocess output, third-party API
    responses, deserialized payloads, database rows written by another actor)
    crosses into something the code trusts (a path, a command, a query, a
-   template, a permission check, a size or loop bound).
+   template, a permission check, a size or loop bound). Find them by search,
+   not by reading file by file: route and handler definitions, CLI parsers,
+   upload and file-path handling, raw queries, `exec`/`eval`, deserializers,
+   template rendering. Then rank them by exposure — unauthenticated and
+   internet-facing first, then cross-tenant, then local — and work them in
+   that order. On a large codebase, hand independent areas to subagents where
+   the tool supports them; whatever you did not reach goes under Not reached.
 2. At each boundary, work through the attack classes and decide which apply:
    injection (command, SQL, path traversal, template, log, header); auth and
    authz bypass (missing check, confused deputy, IDOR, privilege escalation,
@@ -66,7 +72,8 @@ Check first:
 
 ## Constraints
 
-- Read only. Do not fix anything you find, however trivial. Report it.
+- Read only. Do not fix anything you find, however trivial. Report it. The
+  report file and its `.gitignore` line are the only writes.
 - The shell is for inspection and reproduction only: tests, analyzers,
   `git diff`, `git log`, `git blame`. Never edit, move, or delete anything
   inside the target repo through it; scratch work goes outside the working tree.
@@ -85,11 +92,17 @@ Check first:
 
 ## Done when
 
-Every trust boundary in scope has been walked, and each candidate issue is
+Every trust boundary in scope has been walked or listed under Not reached,
+most exposed first, and each candidate issue is
 either discarded or written up with a concrete scenario and a CONFIRMED or
 PLAUSIBLE mark, ordered most severe first.
 
 ## Output
+
+Save the report to `ADVERSARIAL-REVIEW.md` at the repo root, replacing any
+earlier one, and add it to `.gitignore` (creating the file if needed). It
+describes working attacks, so it stays local unless the operator decides
+otherwise.
 
 Open with one line: whether anything exploitable was found, under which threat
 model, over which scope.
@@ -108,3 +121,6 @@ Close with two short lists:
   leaves.
 
 Never report "clean". Report what you attacked, and what you did not.
+
+In chat, give only the opening line, the CONFIRMED findings, and where the
+report was written.

@@ -67,9 +67,12 @@ Check first:
    production — that single line is the most expensive bug in this skill.
 7. Structured data: JSON-LD matching the page — `Organization` and `WebSite` on
    the home page, `Article` with author and dates, `BreadcrumbList`,
-   `SoftwareApplication`, `Product`, `FAQPage`. Mark up only what is visibly on
-   the page; invented ratings or prices earn a manual penalty, not a rich
-   result. Validate the syntax before you finish.
+   `SoftwareApplication`, `Product`. Mark up only what is visibly on the page;
+   invented ratings or prices earn a manual penalty, not a rich result. Google
+   retires rich-result types — `HowTo` in 2023, `FAQPage` in 2026 — so check
+   its [search gallery](https://developers.google.com/search/docs/appearance/structured-data/search-gallery)
+   before promising one, and don't add markup only for a result Google no
+   longer shows. Validate the syntax before you finish.
 8. Images: every image that carries meaning gets `alt` describing what it shows
    or does in context — a button's action, a screenshot's content, a chart's
    takeaway. Decorative images get `alt=""`, never a missing attribute. Don't
@@ -99,6 +102,11 @@ Check first:
     equivalent if it has one, and re-read the built output. Confirm the counts
     from step 1 are now zero, that the sitemap matches the routes the build
     emitted, and that every redirect you added resolves to a 200.
+
+In plan mode, stop after step 1; if the build cannot run without writes, read
+the templates instead and say so. The plan is the Pages table with each
+proposed title and description, every URL change with its redirect, and the
+site-wide changes.
 
 ## Constraints
 

@@ -106,6 +106,9 @@ skeleton of stubs.
    questions left for a later pass. Do not expand scope into implementation
    unless they ask.
 
+In plan mode, harvest and scope with the operator as usual; the plan is the
+agreed `spec/` tree with an outline of each file, and the `AGENTS.md` section.
+
 ## Constraints
 
 - All generated spec content goes under `spec/`. The only root-level write

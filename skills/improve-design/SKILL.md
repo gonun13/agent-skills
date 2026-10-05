@@ -19,15 +19,11 @@ assumed.
 what it looks like in practice, and how to tell when it is broken. It ends with
 a `## Pass` section that says what to look for, what a safe fix is, and where
 to stop. `anti-patterns.md` sits beside them and lists the defaults generated
-interfaces reach for when nobody made a decision. Nothing is loaded for you.
-Try these locations in order:
+interfaces reach for when nobody made a decision. Nothing is loaded for you:
+both are in the skill directory, which is the path given at the top of this
+prompt, or the folder holding this `SKILL.md`.
 
-1. `principles/` and `anti-patterns.md` beside this `SKILL.md`.
-2. `../agent-skills/skills/improve-design/`. This repo is normally cloned beside
-   the projects it is run against.
-3. Any `improve-design/` already vendored inside the project.
-
-If none of them resolve, say so once and work from the index below alone. That
+If that does not resolve, say so once and work from the index below alone. That
 is the degraded mode. It is still useful, but cite the index rather than
 inventing detail, and never invent a thirteenth principle.
 
@@ -56,13 +52,14 @@ three principles at once.
 ## Steps
 
 1. **Pick the mode** and state it in one line before touching anything:
-   - If the operator named a mode, or named a principle by number or title,
-     obey that.
-   - Otherwise, if writes are permitted, use **improve**.
-   - Otherwise, if the session is read-only, use **critique**.
-   - Otherwise, **ask**. List the twelve with their numbers, take a selection
-     (`all`, or for example `02 07 11`), and ask once whether to improve or
-     critique. Ask once, then commit. This is a selection, not an interview.
+   - **improve** by default.
+   - **critique** when the operator asked for a review or critique rather than
+     changes.
+   - **narrowed** when the operator named principles by number or title: run
+     improve or critique over only those.
+
+   In plan mode, survey, render and judge as usual; the improvements you would
+   make, ordered as in step 4, or the critique you would save, are the plan.
 
    Also state the **depth**. It is **refine** unless the operator asked for a
    redesign. Refine keeps the incumbent identity: the palette, typefaces, logo,
@@ -88,8 +85,10 @@ three principles at once.
      output), the API endpoints the UI calls, redirect rules, and the fragment
      anchors that in-page links and headings expose. This list is a contract.
      Step 4 must leave every entry resolving to the same content.
-   - Learn the build, lint, test and visual-regression commands and run them
-     once, so you know which failures you inherited.
+   - In improve mode, learn the build, lint, test and visual-regression
+     commands and run them once before the first edit, so you know which
+     failures you inherited. Critique mode changes nothing, so it skips the
+     run.
    - **Render it.** Start the dev server or build. If a browser or screenshot
      tool is available, capture each surface in scope at about 375px and
      1440px wide, in every theme the project ships. If nothing can render, say
@@ -133,11 +132,10 @@ three principles at once.
    Give each finding a `path:line`, the principle file, the symptom from that
    file's "How to tell it is being violated", and the size of the fix. List the
    tells found, and name what already works so it survives the next change.
-   Then offer to write the critique to `docs/design-review.md`, and write it
-   only if the operator says yes.
+   Save the critique to `docs/design-review.md`.
 
-6. **Ask** runs step 4 or 5 narrowed to the chosen principles, and says which
-   principles were not examined.
+6. **Narrowed** runs step 4 or 5 over the chosen principles only, and says
+   which principles were not examined.
 
 7. **Name the conflicts.** Where two principles pulled opposite ways, say which
    one gave way and why. Common pairs are consistency against distinctiveness,
@@ -176,7 +174,6 @@ three principles at once.
   CSS framework unasked. A self-hosted font or a new token file is a proposal.
 - Do not widen the change you were asked for. Past a `Stop at`, propose what
   you would do and why, and let whoever is deciding decide.
-- In critique mode, write no file until the operator says yes to it.
 - Only claim what was seen. Say which surfaces were rendered, at which widths
   and in which themes. Never report "design complete".
 
@@ -189,8 +186,8 @@ three principles at once.
 - No tell from `anti-patterns.md` remains in touched code without a recorded
   reason.
 - The rendered result was inspected at both widths, or declared unverifiable.
-- The project's build, test and lint commands give the same result as in step
-  2.
+- After an improve, the project's build, test and lint commands give the same
+  result as in step 2.
 - Every route, endpoint, redirect and anchor in the URL baseline still
   resolves to the same content.
 - Nothing was changed past a `Stop at`.
@@ -220,4 +217,4 @@ Close with:
   why.
 - **Needs a human.** Brand or identity decisions, copy rewrites, missing
   assets, and anything that needs access you do not have.
-- **Not examined.** Principles out of scope, in ask mode.
+- **Not examined.** Principles out of scope, when narrowed.

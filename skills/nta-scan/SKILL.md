@@ -25,6 +25,42 @@ Check first:
   network policies, proxy settings.
 - `.gitignore` and any existing `NTA.md` from an earlier scan.
 
+## Search first
+
+Find candidates by pattern, then read each hit and its callers. Matches are
+leads, not findings, and a pattern that matches nothing proves nothing — the
+report says which areas were covered by search alone. `rg` skips gitignored
+paths such as `node_modules`; that is the intended scope (see Constraints).
+
+```sh
+# URLs and hosts
+rg -n --hidden -g '!.git' '(https?|wss?|ftp)://'
+# Outbound clients
+rg -n --hidden -g '!.git' -e '\bfetch\(|axios|XMLHttpRequest|WebSocket\(' \
+  -e '\brequests\.|httpx|urllib|aiohttp' \
+  -e 'http\.(Get|Post|NewRequest)|net\.Dial|\bsocket\b|grpc'
+# Inbound
+rg -n --hidden -g '!.git' -e '\.listen\(|createServer|ListenAndServe|HandleFunc' \
+  -e '\b(app|router)\.(get|post|put|patch|delete|use)\(|@app\.(route|get|post)' \
+  -e '@(Get|Post|Put|Delete|Request)Mapping|^EXPOSE'
+# Execution
+rg -n --hidden -g '!.git' -e 'child_process|\bexecSync\b|\bexec\(|\bspawn\(' \
+  -e 'subprocess|os\.system|os\.popen|exec\.Command|Runtime\.getRuntime' \
+  -e '\beval\(|new Function\(' -e 'curl[^|]*\|\s*(ba|z)?sh' -e '"(pre|post)?install"'
+# Concealment
+rg -n --hidden -g '!.git' -e 'atob\(|b64decode|base64 (-d|--decode)|fromCharCode' \
+  -e '(\\x[0-9a-fA-F]{2}){8,}' -e '[A-Za-z0-9+/]{120,}={0,2}'
+# Secret sources, for step 8
+rg -n --hidden -g '!.git' -e 'process\.env|os\.environ|getenv|ENV\[' \
+  -e '\.ssh/|\.aws/|\.npmrc|\.netrc|id_rsa|keychain'
+```
+
+Adapt the patterns to the project's languages; without `rg`, `grep -rnE`
+takes the same ones. Work the riskiest categories
+first: concealment, then secret sources reaching outbound calls, then
+execution. On a large codebase, hand categories to subagents where the tool
+supports them, and list anything you did not read under Not inspected.
+
 ## Steps
 
 1. Write down the network access this project legitimately needs before looking
@@ -76,7 +112,8 @@ Check first:
 
 `NTA.md` exists, is ignored by git, and every outbound destination, inbound
 entry point, and executed command found in the repo appears in one of its tables
-with a reason — anything unaccounted for listed under Unknown.
+with a reason — anything unaccounted for listed under Unknown, and anything not
+read listed under Not inspected.
 
 ## Output
 

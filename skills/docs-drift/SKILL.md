@@ -15,9 +15,14 @@ mentions — each as a `path:line` pair the operator can act on.
 
 Check first:
 
-- Where the prose lives: `README`, `spec/`, `docs/`, `CONTRIBUTING`, `CHANGELOG` or
-  `AGENTS.md`, man pages, docstrings on the public surface,
-  and inline `--help` or usage text.
+- Where the prose lives: `README`, `spec/`, `docs/`, `CONTRIBUTING`,
+  `AGENTS.md`, man pages, docstrings on the public surface, and inline
+  `--help` or usage text.
+- What is history, not a claim about today: released `CHANGELOG` entries,
+  decision records (`spec/decisions/`, `docs/adr/`), release notes, and
+  upgrade guides for past versions. They describe the code as it was, so
+  leave them out. A changelog's `[Unreleased]` section is the exception — it
+  claims what the code does now.
 - Where the truth lives: the CLI or argument parser, the route table, the
   config loader, the environment-variable reads, the package manifest's
   scripts and entry points, `Makefile` targets, and CI workflow steps.
@@ -27,6 +32,13 @@ Check first:
   two years before the CLI it documents is the first place to look.
 
 ## Steps
+
+Work in order of readership: the README and quick-start, `--help` and usage
+text, the configuration and environment reference, then the rest of `docs/`.
+On a large doc set, pull claims out by search — code spans, `--flags`,
+`UPPER_CASE` variable names, paths, endpoints — rather than reading every page,
+and hand separate doc areas to subagents where the tool supports them.
+Whatever you did not reach goes under Not inspected.
 
 1. Inventory the documented surface: every command, subcommand, flag, option,
    environment variable, config key, endpoint, default value, exit code, file
@@ -57,7 +69,7 @@ Check first:
 
 ## Constraints
 
-- Read only. Drift has two possible fixes — change the docs or change the code
+- Read only, apart from the report file. Drift has two possible fixes — change the docs or change the code
   — and which one is right is a product decision, not yours. Report both sides
   and let the operator choose.
 - Offline. Do not fetch external URLs, install anything, or run commands with
@@ -74,9 +86,11 @@ Check first:
 Every command, flag, variable, config key, endpoint, and default in the
 documented surface has been matched against the code, every one in the code
 has been matched against the docs, and every disagreement is listed with both
-locations.
+locations. Anything not reached is listed under Not inspected.
 
 ## Output
+
+Save the report to `DOCS-DRIFT.md` at the repo root, replacing any earlier one.
 
 Open with one line: how many findings, and whether any are `misleading`.
 

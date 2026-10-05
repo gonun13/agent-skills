@@ -35,7 +35,8 @@ file, and the `docs/` entry point.
 
 ## Constraints
 
-- Read only. Do not change files, propose refactors, or argue for a redesign.
+- Read only, apart from the briefing file. Do not change other files, propose
+  refactors, or argue for a redesign.
 - Quote what the repo says; when something cannot be determined, say so and name
   the file that would answer it.
 
@@ -46,7 +47,8 @@ listed under Unknowns rather than guessed at.
 
 ## Output
 
-One section each, in this order:
+Save the briefing to `RECON.md` at the repo root, replacing any earlier one,
+with one section each, in this order:
 
 - What this is
 - Stack

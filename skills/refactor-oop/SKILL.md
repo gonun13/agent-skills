@@ -58,8 +58,8 @@ code in `src/shared/` or the framework's equivalent. Pick one and state it.
    logic, orchestration, I/O, UI, utility, or mixed. Mixed files are the split
    candidates.
 3. **Propose the tree.** Show the target layout as a tree with a
-   `old path → new path` list, and flag each split. In a read-only session,
-   stop here — that list is the output.
+   `old path → new path` list, and flag each split. In plan mode, stop here —
+   that list is the plan.
 4. **Move first, change nothing.** Relocate files that already have a single
    responsibility, one layer at a time, updating imports, namespaces,
    autoloaders, aliases, and config in the same step. Use `git mv` so history

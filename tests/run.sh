@@ -109,10 +109,13 @@ EOF
     return
   }
 
-  local recorded
+  local recorded real_root
   recorded="$(cat "$capture")"
+  real_root="$(cd -P "$root" && pwd)"
   if assert_contains "$recorded" "cwd=$project" &&
      assert_contains "$recorded" "$expected" &&
+     assert_contains "$recorded" "Skill directory: $real_root/skills/example" &&
+     assert_contains "$recorded" "Mode: $mode." &&
      assert_contains "$recorded" 'UNIQUE_SKILL_INSTRUCTION' &&
      assert_absent "$recorded" 'UNIQUE_FRONTMATTER' &&
      assert_no_bypass "$recorded" &&

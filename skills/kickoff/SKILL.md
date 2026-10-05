@@ -68,6 +68,9 @@ Check first:
    picking one. This is what goes into Open Questions.
 6. Write `DESIGN.md` at the project root using the structure under Output.
 
+In plan mode, interview and research as usual; the plan is `DESIGN.md` in
+full.
+
 ## Constraints
 
 - This produces a document, not a project. Do not scaffold files, run a

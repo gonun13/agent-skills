@@ -7,68 +7,74 @@ description: Supervises a project's changelog and versioning practice, correctin
 
 ## Goal
 
-Maintain an accurate, consistent changelog and versioning practice. If the
-project already has changelog entries or changelog/versioning instructions,
-act as the supervisor: audit them, conservatively flag or correct misleading
-messages, and refine the relevant project documentation. Then write one new
-dated release entry covering everything merged since the last version, with
-the version bumped correctly in the new entry and the project's version field
-when a release is due. Existing release version numbers remain untouched.
+One new dated release entry covering everything merged since the last release,
+with the project's version bumped to match, and the existing changelog audited:
+clear wording problems corrected, factual problems reported.
 
 ## Context
 
 Check first:
 
 - `CHANGELOG.md` (or `CHANGES.md` / `HISTORY.md`); if none exists, create one
-  in [Keep a Changelog](https://keepachangelog.com) format.
+  in [Keep a Changelog](https://keepachangelog.com) format. Note whether it has
+  an `## [Unreleased]` section.
 - The project's version field: `package.json`, `pyproject.toml`, `Cargo.toml`,
-  `go.mod` tags, `VERSION`, ... Ask if you cannot find one.
-- Terminology sources: `README`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING`,
-  `docs/`, `.cursor/rules` — use the project's own names for things.
-- The default branch (`main` or `master`) and the last released version's commit
-  or tag.
+  `VERSION`, ... Some projects have none — Go modules, for one — and the
+  version is the git tag alone. Ask if you can find neither.
+- Changelog and versioning instructions, and the project's own names for
+  things: `README`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING`, `docs/`,
+  `.cursor/rules`.
+- The default branch (`main` or `master`) and the last release: the latest
+  version tag (`git describe --tags --abbrev=0`). With no tags, the commit that
+  added the last release heading:
+  `git log -S'## [X.Y.Z]' --format=%H -- CHANGELOG.md | tail -1`. With neither,
+  ask where the release starts.
 
 ## Steps
 
-1. Audit the project before making a release:
-   - Identify existing changelog entries, release-note conventions, and
-     changelog/versioning instructions in project docs or agent instructions.
-   - If any exist, enter supervisor mode. Check entries for factual accuracy,
-     consistent versions and dates, duplicate or missing changes, project
-     terminology, and compliance with the documented format.
-   - Correct existing message wording only when it is clearly inaccurate,
-     vague, or inconsistent, using the smallest change possible. Preserve the
-     historical meaning and release facts; do not silently invent changes or
-     add missing historical claims.
-   - Refine stale, incomplete, or contradictory changelog/versioning
-     instructions in the relevant project documentation. Make the policy
-     actionable and consistent with the project's actual tooling and format.
-     Do this proactively; do not wait for the user to point out each issue.
-2. Find the last version in the changelog and compare it with the version
-   field. Never change an existing version number, release heading, or release
-   date. If they disagree, explain the mismatch and stop to ask unless the
-   project clearly identifies the version field as an unreleased next version.
-3. `git log <last-version>..HEAD` on the default branch. Read the diffs, not
-   just the messages.
-4. Classify each operator-visible change as Added, Changed, or Fixed. Drop
-   anything with no user-visible effect (refactors, tests, CI, deps, docs-only).
-5. Decide the bump for this run:
-   - any Added, or any behaviour change an operator would notice → **minor**
-   - only Fixed → **patch**
-   - **major**: never automatic. If something looks breaking (removed feature,
-     changed defaults, incompatible format), flag it and ask; bump major only
-     on the operator's say-so.
-6. Write the entry at the top: `## [X.Y.Z] - YYYY-MM-DD`, then `### Added`,
-   `### Changed`, `### Fixed` in that order, omitting empty sections. Never
-   change an already-released entry's version number, date, section structure,
-   or historical facts. In supervisor mode, reword an old entry only when
-   strictly necessary for accuracy, clarity, terminology, or consistency.
-7. Update the version field with the project's own tooling where it exists
+1. Audit what exists. Check existing entries for factual accuracy against the
+   history, consistent versions and dates, duplicates, the project's
+   terminology, and its documented format. Fix wording only where it is
+   clearly inaccurate, vague, or inconsistent, with the smallest change that
+   keeps its meaning; report anything factually wrong instead of rewriting it.
+   Correct a changelog or versioning instruction only where it contradicts the
+   project's actual tooling or format — a file, command, or section that no
+   longer exists. Gaps and vague instructions are proposals, not edits.
+2. Compare the last release with the version field. If they disagree, explain
+   the mismatch and stop to ask, unless the project clearly marks the field as
+   the unreleased next version.
+3. `git log --stat <last-release>..HEAD` on the default branch. Open a commit's
+   diff only where its message is vague, or the files it touches suggest more
+   than the message says — messages undersell, so don't trust them alone.
+4. If there is an `## [Unreleased]` section, it is the draft of this entry:
+   check each line against the log, add what is missing, and drop what did not
+   happen or has no user-visible effect.
+5. Classify each operator-visible change as Added, Changed, Deprecated,
+   Removed, Fixed, or Security. Drop anything with no user-visible effect
+   (refactors, tests, CI, deps, docs-only).
+6. Decide the bump for this run:
+   - only Fixed or Security → **patch**
+   - any Added or Deprecated, or a behaviour change an operator would notice →
+     **minor**
+   - anything breaking (Removed, changed defaults, an incompatible format) →
+     never automatic. Flag it and ask. On the operator's say-so, bump
+     **major** from 1.0.0 up, and **minor** below it (`0.4.2` → `0.5.0`).
+7. Write the entry. With an `## [Unreleased]` section, rename it to
+   `## [X.Y.Z] - YYYY-MM-DD` and add a fresh empty `## [Unreleased]` above it;
+   otherwise add the entry at the top. Sections go in the order Added,
+   Changed, Deprecated, Removed, Fixed, Security, omitting empty ones. If the
+   file keeps compare links at the bottom, add the new one and repoint
+   Unreleased.
+8. Update the version field with the project's own tooling where it exists
    (`npm version --no-git-tag-version`, `poetry version`, `cargo set-version`,
-   ...); otherwise edit the field directly.
-8. Validate: changelog and version field agree, dates are ISO, corrected
-   documentation matches the resulting practice, and `git diff` touches only
-   the changelog, version field, and explicitly refined project documentation.
+   ...); otherwise edit the field directly. Where the version is the tag alone,
+   the `git tag` command in the Output is the bump.
+9. Validate: changelog and version field agree, dates are ISO, and `git diff`
+   touches only the changelog, the version field, and any instruction
+   corrected in step 1.
+
+In plan mode, stop after step 6. The plan is the new entry verbatim, the old →
+new version, and each correction to existing entries or instructions.
 
 When writing entries:
 
@@ -83,33 +89,26 @@ When writing entries:
 
 ## Constraints
 
-- In supervisor mode, the changelog, version field, and relevant project
-  documentation or agent instructions may change. Do not modify unrelated
-  product code or documentation.
+- Only the changelog, the version field, and instructions that contradict the
+  tooling (step 1) may change. No product code or unrelated documentation.
+- Released entries are history: never change their version number, date,
+  heading, or order. Their text changes only as step 1 allows.
 - No commit, no tag, no push — report the exact commands instead.
 - Do not guess the bump when the change type is unclear; ask.
-- Historical records are immutable by default. Never change an old version
-  number, release date, release heading, or version ordering. Reword past
-  entry text only when strictly necessary and without changing its meaning.
-- If an old record appears factually wrong, preserve it and report the issue
-  for the operator's decision; do not silently rewrite it.
-- Do not turn a vague changelog instruction into a new release policy without
-  grounding it in the project's existing tooling and conventions.
 
 ## Done when
 
-The existing changelog and versioning practice has been audited, any clear
-message or documentation problems have been corrected, and the new entry
-lists every operator-visible change since the last version. The version in the
-changelog and version field agree, and the diff contains only scoped changelog,
-version, and documentation updates.
+Existing entries and instructions have been audited, the new entry lists every
+operator-visible change since the last release, the changelog and version field
+agree, and the diff contains only the changes the constraints allow.
 
 ## Output
 
-- Supervisor findings: messages corrected, documentation refined, and anything
-  intentionally left unchanged with the reason.
+- Audit: wording corrected, instructions corrected, and factual problems left
+  for the operator, each with the reason.
 - The new entry verbatim.
 - Old → new version and why that bump.
 - Anything excluded and why.
 - Any suspected breaking change awaiting a decision.
+- Proposals: instruction gaps or policy the project has not settled.
 - Suggested `git commit` and `git tag` commands.
